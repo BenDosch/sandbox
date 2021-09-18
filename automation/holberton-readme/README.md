@@ -1,0 +1,1 @@
+Directory for projects on automating part of the process of creating README.md files for holberton.
