@@ -108,7 +108,7 @@ def create_readme(project, root_repo, container_repo, learning="", tasks=[]) -> 
         name_number = str(task.number) + ". " + task.name
         task_section += (
             "### [{}]".format(name_number) +
-            "({}/{})/blob/main/{}/{} ".format(
+            "({}/{}/blob/main/{}/{} ".format(
                 git_hub, root_repo, container_repo, task.file
             ) + 
             "\"{}\"\n\n{}\n\n---\n\n".format(name_number, task.description)
