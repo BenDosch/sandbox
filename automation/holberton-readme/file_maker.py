@@ -111,7 +111,7 @@ def create_readme(project, root_repo, container_repo, learning="", tasks=[]) -> 
             "({}/{}/blob/main/{}/{} ".format(
                 git_hub, root_repo, container_repo, task.file
             ) + 
-            "\"{}\"\n\n{}\n\n---\n\n".format(name_number, task.description)
+            "\"{})\"\n\n{}\n\n---\n\n".format(name_number, task.description)
         )
 
     author = "\n\n## Author\n\n[{}]({})".format(name, git_hub)
