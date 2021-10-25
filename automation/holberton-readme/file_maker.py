@@ -2,49 +2,22 @@
 """Module containing functions for creating a README.md file for Holberton
 School projects."""
 
+from os import name
+from task import Task
 
-
-def get_project_title():
+def get_project_info():
     """Takes the current working directory of a holberton project and returns the
     title of the project."""
     import os
     directory = os.getcwd()
-    temp = directory.copy()
-    project_reop = temp.split("/")[-1]
-    container_repo = temp[-3] + "/" + temp[-2]
+    temp = directory
+    temp = temp.split("\\")
+    root_repo = directory.split("GitHub")[-1].split("\\")[1]
+    container_repo = directory.split("GitHub")[-1].split("\\")[2:]
+    container_repo = "/".join(container_repo)
     title = temp[-1].split("-")[-1].title().replace("-", " ")
-    return title
+    return title, root_repo, container_repo
 
-class Task():
-    """Individual task as part of a project.
-    """
-    # Class attributes
-    total_tasks = 0
-    
-    # Magic methods
-    def __init__(self, name="", description="", file="") -> None:
-        self.__number = Task.total_tasks
-        Task.total_tasks += 1
-        self.__name = name
-        self.__description = description
-        self.__file = file
-    
-    # Getters and setters
-    @property
-    def number(self) -> int:
-        return self.__number
-    
-    @property
-    def name(self) -> str:
-        return self.__name
-
-    @property
-    def description(self) -> str:
-        return self.__description
-    
-    @property
-    def file(self) -> list:
-        return self.__file
 
 def get_tasks() -> list:
     """Prompts user for information, then uses it to create objects for each
@@ -97,7 +70,7 @@ def get_leanring_objectives() -> str:
         else:
             done = False
 
-def create_readme(project, learning="", tasks=[]) -> None:
+def create_readme(project, root_repo, container_repo, learning="", tasks=[]) -> None:
     """Takes the project name, learning objectives, and tasks, then
     writes them into the README.md file accoriding to template.
 
@@ -106,6 +79,9 @@ def create_readme(project, learning="", tasks=[]) -> None:
         tasks (list, optional): List of tasks for the project. Defaults to [].
         learning (str, optional): Learning objectives for the project. Defaults to "".
     """
+    name = "Benjamin Dosch"
+    git_hub = "https://github.com/BenDoschGit"
+    
     title = "# " + project
     table =  (
         "\n\n1. [Learning Objectives](#learning-objectives)\n2. " +
@@ -132,15 +108,17 @@ def create_readme(project, learning="", tasks=[]) -> None:
         name_number = str(task.number) + ". " + task.name
         task_section += (
             "### [{}]".format(name_number) +
-            "(https://github.com/BenDoschGit/holbertonschool-machine_learning/b\
-                lob/main/supervised_learning/{}/{}".format(
-                project.lower(), task.file
-            )
-            + "\"{}\")\n\n{}\n\n---\n\n".format(name_number, task.description)
+            "({}}/{})/blob/main/{}/{} ".format(
+                git_hub, root_repo, container_repo, task.file
+            ) + 
+            "\"{}\")\n\n{}\n\n---\n\n".format(name_number, task.description)
         )
 
+    author = "---\n\n## Author\n\n[{}}]({}})".format(name, git_hub)
+
     with open("README.md", "w+") as file:
-        text = title + table + learning_objectives + refrences + task_section
+        text = (title + table + learning_objectives + refrences +
+                task_section + author)
         file.write(text)
 
     file.close()
@@ -151,7 +129,7 @@ def main():
     """
     
     # Get project title
-    project = get_project_title()
+    title, root_repo, container_repo = get_project_info()
 
     # Create tasks
     tasks = get_tasks()
@@ -160,7 +138,9 @@ def main():
     learning = get_leanring_objectives()
 
     # Create and write to README.md file
-    create_readme(project=project, learning=learning, tasks=tasks)
+    create_readme(project=title, root_repo=root_repo,
+                  container_repo=container_repo,learning=learning,
+                  tasks=tasks)
 
     # Create task files.
     # Code Goes Here
