@@ -2,13 +2,13 @@
 """Module containing functions for creating a README.md file for Holberton
 School projects."""
 
-from os import name
+import os
 from task import Task
+
 
 def get_project_info():
     """Takes the current working directory of a holberton project and returns the
     title of the project."""
-    import os
     directory = os.getcwd()
     temp = directory
     temp = temp.split("\\")
@@ -24,9 +24,9 @@ def get_tasks() -> list:
     task in the project."""
     tasks = []
     go_on = True
-    confirm = ""
 
     while go_on:
+        confirm = ""
         name = input("Task Name: ")
         # description = input("Task description: ")
         description = "Description goes here once I figure out clipboard input."
@@ -49,7 +49,7 @@ def get_tasks() -> list:
         if go_on == "n":
             break
         go_on = True
-        confirm = ""
+        
 
     return tasks
 
@@ -94,7 +94,7 @@ def create_readme(project, root_repo, container_repo, learning="", tasks=[]) -> 
                 count, task.name, task.number,
                 task.name.lower().replace(" ", "-")
             )
-    table += "\n"
+    table += "\n4. [Author](#author)\n"
     learning_objectives =  (
         "## Learning Objectives\nAt the end of this project, you are " + 
         "expected to be able to explain to anyone, without the help of " +
@@ -114,7 +114,7 @@ def create_readme(project, root_repo, container_repo, learning="", tasks=[]) -> 
             "\"{}\")\n\n{}\n\n---\n\n".format(name_number, task.description)
         )
 
-    author = "\n\n## Author\n\n[{}]({})".format(name, git_hub)
+    author = "## Author\n\n[{}]({})\n".format(name, git_hub)
 
     with open("README.md", "w+") as file:
         text = (title + table + learning_objectives + refrences +
@@ -143,7 +143,9 @@ def main():
                   tasks=tasks)
 
     # Create task files.
-    # Code Goes Here
+    for task in tasks:
+        file = open(task.file)
+        file.close()
 
 if __name__ == "__main__":
     main()
