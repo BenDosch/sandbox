@@ -2,7 +2,7 @@
 """Modules containing various classes of decks."""
 
 import random
-from cards import Card, PlayingCard
+from classes.cards import Card, PlayingCard
 
 
 class Deck():
@@ -12,7 +12,7 @@ class Deck():
         """Generate new deck"""
         self.cards = []
 
-    def draw(self, position: int=0):
+    def draw(self, position: int=0) -> Card:
         """Removes the a card from self.cards at the given postion and
         returns it.
 
@@ -27,6 +27,8 @@ class Deck():
             raise TypeError("position must be an int.")
         if position >= len(self.cards) or position < (-1 * len(self.cards)):
             raise Exception("There are not that many cards in the deck.")
+        if not all([isinstance(card, Card) for card in self.cards]):
+            raise TypeError("All objects in deck are not cards.")
         
         return self.cards.pop(position)
 
@@ -48,11 +50,11 @@ class Deck():
 
         self.cards.insert(position, card)
 
-    def shuffel(self):
+    def shuffel(self) -> None:
         """Shuffles the deck, rearangeig the cards in a random order."""
-        random.shuffle(self.cards)
+        self.cards = random.shuffle(self.cards)
 
-    def __str__(self):
+    def __str__(self)  -> str:
         """Sets the string representation of the deck to the cards inside."""
         string = ""
 
@@ -69,20 +71,19 @@ class PlayingCardDeck(Deck):
     """A deck of playing cards."""
 
     def __init__(self, cards: list=None) -> None:
-        super().__init__()
-        if not isinstance(cards, list):
-            raise TypeError("cards must be a list")
-        if not all([isinstance(x, Card) for x in cards]):
-            raise TypeError("All objects in cards must be Card objects.")
-
-        if cards:
+        if cards is not None:
+            if not isinstance(cards, list):
+                raise TypeError("cards must be a list")
+            if not all([isinstance(x, Card) for x in cards]):
+                raise TypeError("All objects in cards must be Card objects.")
             self.cards = cards
         else:
+            self.cards = []
             self.reset()
 
     def reset(self) -> None:
         """Returns all cards to the deck and shuffels it."""
-        self.cards.clear()
+        self.cards = []
 
         suits = ["♣", "♢", "♡", "♠"]
         values = ["A", "2", "3", "4", "5", "6", "7",
@@ -93,9 +94,8 @@ class PlayingCardDeck(Deck):
 
         self.shuffel()
 
-    def show(self):
+    def show(self) -> None:
         """Shows the playing cards in deck."""
-        print(type(self.cards))
         print([card.name for card in self.cards])
 
 
@@ -104,13 +104,14 @@ class PlayingCardHand(PlayingCardDeck):
     """A hand of playing cards"""
 
     def __init__(self, cards: list=None) -> None:
-        super().__init__()
-        if not isinstance(cards, list):
-            raise TypeError("cards must be a list")
-        if not all([isinstance(x, Card) for x in cards]):
-            raise TypeError("All objects in cards must be Card objects.")
-
         if cards:
+            if not isinstance(cards, list):
+            
+                raise TypeError("cards must be a list")
+            
+            if not all([isinstance(x, Card) for x in cards]):
+            
+                raise TypeError("All objects in cards must be Card objects.")
             self.cards = cards
         else:
             self.cards = []

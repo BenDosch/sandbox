@@ -4,7 +4,7 @@
 import unittest
 from unittest.mock import patch
 from io import StringIO
-from card_games.classes.decks import Deck
+from classes.decks import Deck
 from classes.decks import PlayingCardDeck, PlayingCardHand
 from classes.cards import PlayingCard
 
@@ -12,6 +12,7 @@ from classes.cards import PlayingCard
 class TestPlayingCardClasses(unittest.TestCase):
     """Unittests for Playing Card related Classes."""
 
+    @classmethod
     def setUpClass(self):
         """Class method that sets up variables for use by tests"""
         suits = ["♣", "♢", "♡", "♠"]
@@ -22,23 +23,23 @@ class TestPlayingCardClasses(unittest.TestCase):
             for value in values:
                 self.ordered_cards.append(PlayingCard(value, suit))
 
-        self.unopened_deck = PlayingCardDeck(self.ordered_cards)
-
     def setUp(self) -> None:
         """Sets up before ever every test function is executed"""
-        deck = PlayingCardDeck(self.unopened_deck)
-        empty_deck = PlayingCardDeck(self.empty_deck)
-        hand = PlayingCardHand()
+        self.deck = PlayingCardDeck(self.ordered_cards)
+        self.empty_deck = PlayingCardDeck([])
+        self.hand = PlayingCardHand()
 
     def test_init(self):
         """"Tests of the __init__() functions."""
         # PlayingCardDeck
-        self.assertRaises(TypeError, PlayingCardDeck("3♠"))
-        self.assertRaises(TypeError, PlayingCard(["4♠", "5♠"]))
+        with self.assertRaises(TypeError): 
+            PlayingCardDeck("3♠")
+        with self.assertRaises(TypeError): 
+            PlayingCard(["4♠", "5♠"])
         random_deck1 = PlayingCardDeck()
         random_deck2 = PlayingCardDeck()
         self.assertEqual(52, len(random_deck1.cards))
-        self.assertNotEqual(self.unopened_deck.cards, random_deck1)
+        self.assertNotEqual(self.deck.cards, random_deck1)
         self.assertNotEqual(random_deck1.cards, random_deck2.cards)
         self.assertNotEqual(random_deck1.cards, random_deck2.cards)
         self.assertEqual(self.deck.cards, self.ordered_cards)
@@ -46,20 +47,18 @@ class TestPlayingCardClasses(unittest.TestCase):
                              self.deck.cards]))
         # Test all cards are unique
         card_list_1 = [card.name for card in random_deck1.cards]
-        self.assertEqual(len(set(card_list_1)) == len(card_list_1))
-        
+        self.assertEqual(len(set(card_list_1)), len(card_list_1))
 
         # PlayingCardHand
-        self.assertRaises(TypeError, PlayingCardHand("3♠"))
-        self.assertRaises(TypeError, PlayingCard(["4♠", "5♠"]))
-        random_hand1 = PlayingCardHand()
-        random_hand2 = PlayingCardHand()
-        self.assertNotEqual(self.unopened_hand.cards, random_hand1)
-        self.assertNotEqual(random_hand1.cards, random_hand2.cards)
-        self.assertNotEqual(random_hand1.cards, random_hand2.cards)
-        self.assertEqual(self.hand.cards, self.ordered_cards)
+        with self.assertRaises(TypeError):
+            PlayingCardHand("3♠")
+        with self.assertRaises(TypeError):
+            PlayingCard(["4♠", "5♠"])
+        ordered_hand = PlayingCardHand(self.ordered_cards)
+        self.assertEqual(self.hand.cards, [])
+        self.assertEqual(ordered_hand.cards, self.ordered_cards)
         self.assertTrue(all([isinstance(x, PlayingCard) for x in
-                             self.hand.cards]))
+                             ordered_hand.cards]))
 
     def test_str(self):
         """Tests for __str__ methods."""
@@ -67,19 +66,30 @@ class TestPlayingCardClasses(unittest.TestCase):
 
     def test_show(self):
         """Tests for the show methods."""
-        card_sample = self.unopened_deck.cards[0:3]
-        
+        card_sample = self.deck.cards[0:3]
+
         # PlayingCardDeck
         deck = PlayingCardDeck(card_sample)
         with patch('sys.stdout', new = StringIO()) as fake_out:
-            self.deck.show()
-            self.assertEqual(fake_out.getvalue(), str(card_sample))
+            deck.show()
+            check = '['
+            for card in deck.cards:
+                check += "'" + card.name + "', "
+            check = check[:-2]
+            check +=']\n'
+
+            self.assertEqual(fake_out.getvalue(), check)
 
         # PlayingCardHand
         hand = PlayingCardHand(card_sample)
         with patch('sys.stdout', new = StringIO()) as fake_out:
-            self.hand.show()
-            self.assertEqual(fake_out.getvalue(), str(card_sample))
+            hand.show()
+            check = '['
+            for card in hand.cards:
+                check += "'" + card.name + "', "
+            check = check[:-2]
+            check +=']\n'
+            self.assertEqual(fake_out.getvalue(), check)
 
     def test_draw(self):
         """Tests for the draw methods"""
@@ -87,34 +97,46 @@ class TestPlayingCardClasses(unittest.TestCase):
         card2 = self.ordered_cards[-1]
 
         # PlayingCardDeck
-        self.assertRaises(TypeError, self.deck.draw("A♠"))
-        self.assertRaises(TypeError, self.deck.draw([3, 5]))
-        self.assertRaises(Exception, self.deck.draw(60))
-        self.assertRaises(Exception, self.deck.draw(-79))
+        with self.assertRaises(TypeError):
+            self.deck.draw("A♠")
+        with self.assertRaises(TypeError):
+            self.deck.draw([3, 5])
+        with self.assertRaises(Exception):
+            self.deck.draw(60)
+        with self.assertRaises(Exception):
+            self.deck.draw(-79)
         self.assertEqual(self.deck.draw(0), card1)
         self.assertEqual(self.deck.draw(-1), card2)
 
         # PlayingCardHand
         deck = PlayingCardDeck([card1, card2])
-        self.assertRaises(TypeError, self.hand.draw("deck", 0))
-        self.assertRaises(TypeError, self.hand.draw(deck, "A♠"))
-        self.assertRaises(TypeError, self.hand.draw(deck, [3, 5]))
-        self.assertRaises(Exception, self.hand.draw(deck, 60))
-        self.assertRaises(Exception, self.hand.draw(deck, -79))
-        self.assertEqual(self.hand.draw(deck, 0), card1)
-        self.assertEqual(self.hand.draw(deck, -1), card2)
+        with self.assertRaises(TypeError):
+            self.hand.draw("deck", 0)
+        with self.assertRaises(TypeError):
+            self.hand.draw(deck, "A♠")
+        with self.assertRaises(TypeError):
+            self.hand.draw(deck, [3, 5])
+        with self.assertRaises(Exception):
+            self.hand.draw(deck, 60)
+        with self.assertRaises(Exception):
+            self.hand.draw(deck, -79)
+        self.hand.draw(deck, 0)
+        self.hand.draw(deck, -1)
+        self.assertEqual(self.hand.cards[-2], card1)
+        self.assertEqual(self.hand.cards[-1], card2)
 
     def test_shuffel(self):
         """Tests for the shuffel methods"""
         card_list = self.ordered_cards[0:5]
 
         # PlayingCardDeck
-        deck = PlayingCardDeck(card_list)
-        deck.shuffel()
-        self.assertEqual(len(deck.cards), len(card_list))
-        self.assertTrue(all(card in deck.cards for card in card_list) and
-                        all(card in card_list for card in deck.cards))
-        self.assertNotEqual(deck.cards, card_list)
+        deck1 = PlayingCardDeck(card_list)
+        deck1.shuffel()
+        self.assertEqual(len(deck1.cards), len(card_list))
+        self.assertTrue(all(card in deck1.cards for card in card_list) and
+                        all(card in card_list for card in deck1.cards))
+        deck2 = PlayingCardDeck(card_list)
+        self.assertNotEqual(deck1.__str__(), deck2.__str__())
 
         # PlayingCardHand
         hand = PlayingCardHand(card_list)
@@ -132,11 +154,16 @@ class TestPlayingCardClasses(unittest.TestCase):
         deck = Deck()
 
         # Deck
-        self.assertRaises(TypeError, deck.place("A♠", 0))
-        self.assertRaises(TypeError, deck.place(card1, 3, 5))
-        self.assertRaises(TypeError, deck.place(card1, [3, 5]))
-        self.assertRaises(Exception, deck.place(card1, 60))
-        self.assertRaises(Exception, deck.place(card1, -79))
+        with self.assertRaises(TypeError):
+            deck.place("A♠", 0)
+        with self.assertRaises(TypeError):
+            deck.place(card1, 3, 5)
+        with self.assertRaises(TypeError):
+            deck.place(card1, [3, 5])
+        with self.assertRaises(Exception):
+            deck.place(card1, 60)
+        with self.assertRaises(Exception):
+            deck.place(card1, -79)
         deck.place(card1, 0)
         deck.place(card2,-1)
         self.assertEqual(deck.cards[0], card1)
@@ -144,27 +171,36 @@ class TestPlayingCardClasses(unittest.TestCase):
 
         # PlayingCardHand
         deck = Deck()
-        self.assertRaises(TypeError, self.hand.place("deck", card1, 0))
-        self.assertRaises(TypeError, self.hand.place(deck, "A♠", 0))
-        self.assertRaises(TypeError, self.hand.place(deck, card1, 3, 5))
-        self.assertRaises(TypeError, self.hand.place(deck, card1, [3, 5]))
-        self.assertRaises(Exception, self.hand.place(deck, card1, 60))
-        self.assertRaises(Exception, self.hand.place(deck, card1, -79))
+        with self.assertRaises(TypeError):
+            self.hand.place("deck", card1, 0)
+        with self.assertRaises(TypeError):
+            self.hand.place(deck, "A♠", 0)
+        with self.assertRaises(TypeError):
+            self.hand.place(deck, card1, 3, 5)
+        with self.assertRaises(TypeError):
+            self.hand.place(deck, card1, [3, 5])
+        with self.assertRaises(Exception):
+            self.hand.place(deck, card1, 60)
+        with self.assertRaises(Exception):
+            self.hand.place(deck, card1, -79)
         self.hand.place(deck, card1, 0)
         self.hand.place(deck, card2, -1)
         self.assertEqual(deck.cards[0], card1)
         self.assertEqual(deck.cards[-1], card2)
-    
+
     def test_sorting(self):
         """Tests for the sorting methods"""
         # PlayingCardHand
         clubs = self.ordered_cards[0:2]
         dimonds = self.ordered_cards[13:15]
-        sorted_suits = clubs + dimonds
-        sorted_numbers = [clubs[0], dimonds[0], clubs[1], dimonds[1]]
-        hand = PlayingCardHand([dimonds + clubs])
-        self.assertEqual(hand.sort_number(), sorted_numbers)
-        self.assertEqual(hand.sort_suit(), sorted_suits)
+        sorted_suits = PlayingCardHand(clubs + dimonds)
+        sorted_numbers = PlayingCardHand([dimonds[0], clubs[0],
+                                          dimonds[1], clubs[1]])
+        hand = PlayingCardHand(cards=dimonds + clubs)
+        hand.sort_number()
+        self.assertEqual(hand.__str__(), sorted_numbers.__str__())
+        hand.sort_suit()
+        self.assertEqual(hand.__str__(), sorted_suits.__str__())
 
     def test_reset(self):
         """Tests for the reset methods."""
@@ -172,8 +208,7 @@ class TestPlayingCardClasses(unittest.TestCase):
         random_deck2 = PlayingCardDeck()
         random_deck2.cards = random_deck1.cards
         random_deck1.reset()
-        self.assertNotEqual(random_deck1.cards, random_deck2.cards)
+        self.assertFalse(random_deck1.__str__() == random_deck2.__str__())
 
-    def test_(self):
-        """Test template"""
-        pass
+if __name__ == '__main__':
+    unittest.main()
