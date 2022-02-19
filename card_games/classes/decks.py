@@ -102,8 +102,17 @@ class PlayingCardDeck(Deck):
 class PlayingCardHand(PlayingCardDeck):
     """A hand of playing cards"""
 
-    def __init__(self) -> None:
+    def __init__(self, cards: list=None) -> None:
         super().__init__()
+        if not isinstance(cards, list):
+            raise TypeError("cards must be a list")
+        if not all([isinstance(x, Card) for x in cards]):
+            raise TypeError("All objects in cards must be Card objects.")
+
+        if cards:
+            self.cards = cards
+        else:
+            self.cards = []
 
     def draw(self, deck: Deck, position: int=0):
         """Draws a card from the specified deck.
