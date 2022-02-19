@@ -2,7 +2,7 @@
 """Modules containing various classes of decks."""
 
 import random
-from card_games.classes.cards import Card, PlayingCard
+from cards import Card, PlayingCard
 
 
 class Deck():
@@ -20,13 +20,14 @@ class Deck():
             position (int): Location in the deck to draw from. Defaults to 0,
                 the top.
 
-        Returns: Card or None on failure.
+        Returns: 
             Card: The card in the sepecified position from the deck.
         """
+        if not isinstance(position, int):
+            raise TypeError("position must be an int.")
         if position >= len(self.cards) or position < (-1 * len(self.cards)):
-            print("There are not that many cards in the deck.")
-            return None
-
+            raise Exception("There are not that many cards in the deck.")
+        
         return self.cards.pop(position)
 
     def place(self, card: Card, position: int=0) -> None:
