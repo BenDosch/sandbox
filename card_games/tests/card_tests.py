@@ -8,6 +8,7 @@ from classes.cards import PlayingCard
 class TestPlayingCardClasses(unittest.TestCase):
     """Unittests for Playing Card related Classes."""
 
+    @classmethod
     def setUpClass(self):
         """Class method that sets up variables for use by tests"""
         pass
@@ -19,23 +20,32 @@ class TestPlayingCardClasses(unittest.TestCase):
     def test_init(self):
         """"Tests of the __init__() functions."""
         # PlayingCard
-        self.assertRaises(Exception, PlayingCard())
-        self.assertRaises(Exception, PlayingCard("1"))
-        self.assertRaises(Exception, PlayingCard("1", "♠", "extra"))
-        self.assertRaises(TypeError, PlayingCard(["1"], "♠"))
-        self.assertRaises(TypeError, PlayingCard("1", 1))
-        self.assertRaises(ValueError, PlayingCard("1", "4"))
-        self.assertRaises(ValueError, PlayingCard("1", "club"))
-        self.assertRaises(ValueError, PlayingCard("♢", "♢"))
-        self.assertRaises(ValueError, PlayingCard("0", "♣"))
+        with self.assertRaises(Exception):
+            PlayingCard()
+        with self.assertRaises(Exception):
+            PlayingCard("2")
+        with self.assertRaises(Exception):
+            PlayingCard("2", "♠", "extra")
+        with self.assertRaises(TypeError):
+            PlayingCard(["2"], "♠")
+        with self.assertRaises(TypeError):
+            PlayingCard("2", 2)
+        with self.assertRaises(ValueError):
+            PlayingCard("2", "4")
+        with self.assertRaises(ValueError):
+            PlayingCard("2", "club")
+        with self.assertRaises(ValueError):
+            PlayingCard("♢", "♢")
+        with self.assertRaises(ValueError):
+            PlayingCard("0", "♣")
         card1 = PlayingCard("9", "♣")
         self.assertEqual(card1.value, "9")
         self.assertEqual(card1.suit, "♣")
         self.assertEqual(card1.name, "9♣")
         card2 = PlayingCard("A", "♠")
-        self.assertEqual(card1.value, "A")
-        self.assertEqual(card1.suit, "♠")
-        self.assertEqual(card1.name, "A♠")
+        self.assertEqual(card2.value, "A")
+        self.assertEqual(card2.suit, "♠")
+        self.assertEqual(card2.name, "A♠")
 
     def test_operators(self):
         """Tests for changes to operators."""
