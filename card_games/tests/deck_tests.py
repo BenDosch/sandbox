@@ -130,21 +130,22 @@ class TestPlayingCardClasses(unittest.TestCase):
         card_list = self.ordered_cards[0:5]
 
         # PlayingCardDeck
-        deck1 = PlayingCardDeck(card_list)
+        deck1 = PlayingCardDeck(self.ordered_cards[0:5])
         deck1.shuffel()
         self.assertEqual(len(deck1.cards), len(card_list))
         self.assertTrue(all(card in deck1.cards for card in card_list) and
                         all(card in card_list for card in deck1.cards))
-        deck2 = PlayingCardDeck(card_list)
+        deck2 = PlayingCardDeck(self.ordered_cards[0:5])
         self.assertNotEqual(deck1.__str__(), deck2.__str__())
 
         # PlayingCardHand
-        hand = PlayingCardHand(card_list)
-        hand.shuffel()
-        self.assertEqual(len(hand.cards), len(card_list))
-        self.assertTrue(all(card in hand.cards for card in card_list) and
-                        all(card in card_list for card in hand.cards))
-        self.assertNotEqual(hand.cards, card_list)
+        hand1 = PlayingCardHand(self.ordered_cards[0:5])
+        hand1.shuffel()
+        self.assertEqual(len(hand1.cards), len(card_list))
+        self.assertTrue(all(card in hand1.cards for card in card_list) and
+                        all(card in card_list for card in hand1.cards))
+        hand2 = PlayingCardHand(self.ordered_cards[0:5])
+        self.assertNotEqual(hand1.__str__(), hand2.__str__())
 
     def test_place(self):
         """Tests for the place methods"""
