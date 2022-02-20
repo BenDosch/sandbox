@@ -13,7 +13,7 @@ Personal project to create a few environments to simulate card games. Intented u
 
 ### Crrrent Games:
 
-* Black Jack: Not yet started.
+* Black Jack: In progress.
 * Texas HolEm: Not yet started.
 * 5-Card Draw: Not yet started.
 
