@@ -44,8 +44,7 @@ class Deck():
             raise TypeError("card must be a type of Card object.")
         if not isinstance(position, int):
             raise TypeError("position must be an int.")
-
-        if position >= len(self.cards) or position < (-1 * len(self.cards)):
+        if position > (len(self.cards) + 1) or position < -1 * (len(self.cards) + 1):
             raise Exception("There are not that many cards in the deck.")
 
         self.cards.insert(position, card)
@@ -141,8 +140,8 @@ class PlayingCardHand(PlayingCardDeck):
             raise TypeError("position must be an int.")
 
         if card in self.cards:
-            self.cards.remove(card)
             deck.place(card, position)
+            self.cards.remove(card)
         else:
             print("Card was not in hand.")
 

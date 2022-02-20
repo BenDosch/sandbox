@@ -164,13 +164,14 @@ class TestPlayingCardClasses(unittest.TestCase):
             deck.place(card1, 60)
         with self.assertRaises(Exception):
             deck.place(card1, -79)
-        deck.place(card1, 0)
-        deck.place(card2,-1)
-        self.assertEqual(deck.cards[0], card1)
-        self.assertEqual(deck.cards[-1], card2)
+        deck.place(card1, 0)  # Top
+        deck.place(card2, len(deck.cards))  # Bottom
+        self.assertEqual(deck.cards[0].name, card1.name)
+        self.assertEqual(deck.cards[-1].name, card2.name)
 
         # PlayingCardHand
         deck = Deck()
+        hand = PlayingCardHand([card1, card2])
         with self.assertRaises(TypeError):
             self.hand.place("deck", card1, 0)
         with self.assertRaises(TypeError):
@@ -179,14 +180,10 @@ class TestPlayingCardClasses(unittest.TestCase):
             self.hand.place(deck, card1, 3, 5)
         with self.assertRaises(TypeError):
             self.hand.place(deck, card1, [3, 5])
-        with self.assertRaises(Exception):
-            self.hand.place(deck, card1, 60)
-        with self.assertRaises(Exception):
-            self.hand.place(deck, card1, -79)
-        self.hand.place(deck, card1, 0)
-        self.hand.place(deck, card2, -1)
-        self.assertEqual(deck.cards[0], card1)
-        self.assertEqual(deck.cards[-1], card2)
+        hand.place(deck, card1, 0)
+        hand.place(deck, card2, len(deck.cards))
+        self.assertEqual(deck.cards[0].name, card1.name)
+        self.assertEqual(deck.cards[-1].name, card2.name)
 
     def test_sorting(self):
         """Tests for the sorting methods"""
@@ -209,6 +206,3 @@ class TestPlayingCardClasses(unittest.TestCase):
         random_deck2.cards = random_deck1.cards
         random_deck1.reset()
         self.assertFalse(random_deck1.__str__() == random_deck2.__str__())
-
-if __name__ == '__main__':
-    unittest.main()
