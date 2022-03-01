@@ -83,9 +83,10 @@ def create_readme(project, root_repo, container_repo, learning="", tasks=[]) -> 
     git_hub = "https://github.com/BenDoschGit"
     
     title = "# " + project
+    author = "## Author\n\n[{}]({})\n".format(name, git_hub)
     table =  (
         "\n\n1. [Learning Objectives](#learning-objectives)\n2. " +
-        "[References](#references)\n3. [Tasks](#tasks)\n"
+        "[References](#references)\n3. [Tasks](#tasks)\n" + author + "\n"
     )
     count = 0
     for task in tasks:
@@ -113,8 +114,6 @@ def create_readme(project, root_repo, container_repo, learning="", tasks=[]) -> 
             ) + 
             "\"{}\")\n\n{}\n\n---\n\n".format(name_number, task.description)
         )
-
-    author = "## Author\n\n[{}]({})\n".format(name, git_hub)
 
     with open("README.md", "w+") as file:
         text = (title + table + learning_objectives + refrences +
@@ -144,8 +143,8 @@ def main():
 
     # Create task files.
     for task in tasks:
-        file = open(task.file)
-        file.close()
+        with open(task.file, "w+") as file:
+            file.close()
 
 if __name__ == "__main__":
     main()
