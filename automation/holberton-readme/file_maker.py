@@ -86,7 +86,8 @@ def create_readme(project, root_repo, container_repo, learning="", tasks=[]) -> 
     author = "## Author\n\n[{}]({})\n".format(name, git_hub)
     table =  (
         "\n\n1. [Learning Objectives](#learning-objectives)\n2. " +
-        "[References](#references)\n3. [Tasks](#tasks)\n" + author + "\n"
+        "[References](#references)\n3. [Tasks](#tasks)\n" +
+        "4. [Author](#author)\n\n"
     )
     count = 0
     for task in tasks:
